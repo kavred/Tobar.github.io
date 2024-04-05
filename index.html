@@ -1,94 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English-Spanish Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .quiz-container {
-            margin-top: 50px;
-        }
-        .question {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .input-box {
-            margin-bottom: 20px;
-        }
-        .submit-btn {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <h1>English-Spanish Quiz</h1>
-    <div class="quiz-container">
-        <form id="quiz-form">
-            <div class="question" id="question"></div>
-            <div class="input-box">
-                <input type="text" id="answer" required autocomplete="off">
-            </div>
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
-        <div id="score" style="display: none;"></div>
-    </div>
+<script>
+    const word_dict = {
+        "house": "casa",
+        "dog": "perro",
+        "cat": "gato",
+        "book": "libro",
+        "table": "mesa",
+        // Add more words as needed
+    };
 
-    <script>
-        const word_dict = {
-            "house": "casa",
-            "dog": "perro",
-            "cat": "gato",
-            "book": "libro",
-            "table": "mesa",
-            // Add more words as needed
-        };
+    const quizForm = document.getElementById('quiz-form');
+    const questionElement = document.getElementById('question');
+    const answerElement = document.getElementById('answer');
+    const scoreElement = document.getElementById('score');
 
-        const quizForm = document.getElementById('quiz-form');
-        const questionElement = document.getElementById('question');
-        const answerElement = document.getElementById('answer');
-        const scoreElement = document.getElementById('score');
+    let score = 0;
+    let totalQuestions = 0;
+    let shuffledQuestions = [];
 
-        let score = 0;
-        let totalQuestions = 0;
-        let currentQuestion = 0;
+    function shuffleQuestions() {
+        shuffledQuestions = Object.keys(word_dict).sort(() => Math.random() - 0.5);
+    }
 
-        function displayNextQuestion() {
-            if (currentQuestion < Object.keys(word_dict).length) {
-                const words = Object.keys(word_dict);
-                const word = words[currentQuestion];
-                questionElement.textContent = `What is the Spanish translation of '${word}'?`;
-                answerElement.value = '';
-                answerElement.focus();
-                totalQuestions++;
-                currentQuestion++;
-            } else {
-                quizForm.style.display = 'none';
-                scoreElement.textContent = `Quiz completed. Your score is ${score}/${totalQuestions}.`;
-                scoreElement.style.display = 'block';
-            }
+    function displayNextQuestion() {
+        if (shuffledQuestions.length > 0) {
+            const word = shuffledQuestions.pop();
+            questionElement.textContent = `What is the Spanish translation of '${word}'?`;
+            answerElement.value = '';
+            answerElement.focus();
+            totalQuestions++;
+        } else {
+            quizForm.style.display = 'none';
+            scoreElement.textContent = `Quiz completed. Your score is ${score}/${totalQuestions}.`;
+            scoreElement.style.display = 'block';
         }
+    }
 
-        quizForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const answer = answerElement.value.trim().toLowerCase();
-            const currentWord = Object.keys(word_dict)[currentQuestion - 1];
-            const correctAnswer = word_dict[currentWord].toLowerCase();
-            if (answer === correctAnswer) {
-                score++;
-            }
-            displayNextQuestion();
-        });
-
+    quizForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const answer = answerElement.value.trim().toLowerCase();
+        const currentWord = Object.keys(word_dict).find(word => word_dict[word].toLowerCase() === answer);
+        if (currentWord && shuffledQuestions.length > 0) {
+            score++;
+        }
         displayNextQuestion();
-    </script>
-</body>
-</html>
+    });
+
+    shuffleQuestions();
+    displayNextQuestion();
+</script>
