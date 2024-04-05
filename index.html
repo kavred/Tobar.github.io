@@ -39,7 +39,7 @@
         event.preventDefault();
         const answer = answerElement.value.trim().toLowerCase();
         const currentWord = Object.keys(word_dict).find(word => word_dict[word].toLowerCase() === answer);
-        if (currentWord && shuffledQuestions.length > 0) {
+        if (currentWord !== undefined) {
             score++;
         }
         displayNextQuestion();
