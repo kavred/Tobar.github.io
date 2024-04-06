@@ -1,106 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ms. Tobar Spanish Game</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ms. Tobar Spanish Game</title>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        text-align: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
     }
     #game-container {
-        display: none;
+      display: none;
     }
-</style>
+  </style>
 </head>
 <body>
-<div id="game-container">
-    <h1>Ms. Tobar Spanish Game</h1>
-    <div id="question"></div>
-    <input type="text" id="answer" placeholder="Enter your answer">
-    <button onclick="checkAnswer()">Submit</button>
-    <div id="result"></div>
-</div>
-<div id="score-container" style="display: none;">
-    <h2>Final Score</h2>
-    <div id="score"></div>
-    <div id="code"></div>
-</div>
+  <h1>Ms. Tobar Spanish Game</h1>
+  
+  <div id="game-container">
+    <h2>Translate the English term to Spanish:</h2>
+    <p id="question"></p>
+    <input type="text" id="answer" placeholder="Your answer">
+    <p id="result"></p>
+    <button id="next-btn">Next</button>
+  </div>
 
-<script>
-    var terms = [
-        { english: "hello", spanish: "hola" },
-        { english: "goodbye", spanish: "adiós" },
-        { english: "thank you", spanish: "gracias" },
-        // Add more terms as needed
+  <div id="final-score" style="display: none;">
+    <h2>Game Over</h2>
+    <p>Your score: <span id="score"></span></p>
+    <p id="code"></p>
+  </div>
+
+  <script>
+    // Define your terms here
+    const terms = [
+      { english: "Hello", spanish: "Hola" },
+      { english: "Goodbye", spanish: "Adiós" },
+      { english: "Thank you", spanish: "Gracias" },
+      // Add more terms as needed
     ];
 
-    var shuffledTerms = shuffleArray(terms);
-    var currentTermIndex = 0;
-    var score = 0;
+    let currentIndex = 0;
+    let score = 0;
 
-    function startGame() {
-        document.getElementById("game-container").style.display = "block";
-        showNextQuestion();
-        document.getElementById("answer").addEventListener("keyup", function(event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                checkAnswer();
-            }
-        });
+    // Function to shuffle the terms array
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
 
-    function showNextQuestion() {
-        if (currentTermIndex < shuffledTerms.length) {
-            document.getElementById("question").textContent = shuffledTerms[currentTermIndex].english;
-            document.getElementById("answer").value = "";
-        } else {
-            endGame();
-        }
+    // Function to display the next question
+    function displayNextQuestion() {
+      if (currentIndex < terms.length) {
+        const question = terms[currentIndex].english;
+        document.getElementById("question").textContent = question;
+        document.getElementById("answer").value = "";
+        document.getElementById("result").textContent = "";
+        currentIndex++;
+      } else {
+        displayFinalScore();
+      }
     }
 
+    // Function to check the answer
     function checkAnswer() {
-        var userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-        var correctAnswer = shuffledTerms[currentTermIndex].spanish.toLowerCase();
-        var resultContainer = document.getElementById("result");
+      const userAnswer = document.getElementById("answer").value.toLowerCase();
+      const correctAnswer = terms[currentIndex - 1].spanish.toLowerCase();
+      if (userAnswer === correctAnswer) {
+        document.getElementById("result").textContent = "Correct!";
+        score++;
+      } else {
+        document.getElementById("result").textContent = "Wrong! The correct answer is: " + correctAnswer;
+      }
+    }
 
-        if (userAnswer === correctAnswer) {
-            resultContainer.textContent = "Correct!";
-            score++;
-        } else {
-            resultContainer.textContent = "Incorrect. The correct answer is '" + correctAnswer + "'.";
+    // Function to display the final score
+    function displayFinalScore() {
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("final-score").style.display = "block";
+      document.getElementById("score").textContent = score + "/" + terms.length;
+
+      // Generate random 10-digit code
+      const code = Math.floor(Math.random() * 9000000000) + 1000000000;
+      document.getElementById("code").textContent = "Unique Code: " + code;
+    }
+
+    // Event listener for Enter key press
+    document.getElementById("answer").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (document.getElementById("answer").value !== "") {
+          document.getElementById("next-btn").click();
         }
+      }
+    });
 
-        currentTermIndex++;
-        setTimeout(showNextQuestion, 1000);
-    }
+    // Event listener for Next button click
+    document.getElementById("next-btn").addEventListener("click", function() {
+      checkAnswer();
+      displayNextQuestion();
+    });
 
-    function endGame() {
-        document.getElementById("game-container").style.display = "none";
-        document.getElementById("score-container").style.display = "block";
-        document.getElementById("score").textContent = "Score: " + score + "/" + shuffledTerms.length;
-        document.getElementById("code").textContent = "Unique Code: " + generateUniqueCode();
-    }
-
-    function shuffleArray(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    function generateUniqueCode() {
-        var code = "";
-        var characters = "0123456789";
-        for (var i = 0; i < 10; i++) {
-            code += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        return code;
-    }
-
-    startGame();
-</script>
+    // Start the game
+    shuffle(terms);
+    displayNextQuestion();
+    document.getElementById("game-container").style.display = "block";
+  </script>
 </body>
 </html>
