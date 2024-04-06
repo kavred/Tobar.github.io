@@ -9,104 +9,88 @@
       font-family: Arial, sans-serif;
       text-align: center;
     }
-    #game-container {
-      display: none;
-    }
   </style>
 </head>
 <body>
   <h1>Ms. Tobar Spanish Game</h1>
-  
   <div id="game-container">
-    <h2>Translate the English term to Spanish:</h2>
-    <p id="question"></p>
-    <input type="text" id="answer" placeholder="Your answer">
+    <p id="term">English Term</p>
+    <input type="text" id="answer" onkeypress="handleKeyPress(event)">
     <p id="result"></p>
-    <button id="next-btn">Next</button>
   </div>
-
-  <div id="final-score" style="display: none;">
-    <h2>Game Over</h2>
-    <p>Your score: <span id="score"></span></p>
-    <p id="code"></p>
-  </div>
+  <button onclick="nextQuestion()">Next</button>
 
   <script>
-    // Define your terms here
-    const terms = [
-      { english: "Hello", spanish: "Hola" },
-      { english: "Goodbye", spanish: "Adiós" },
-      { english: "Thank you", spanish: "Gracias" },
+    // Define your terms here, pair English terms with their Spanish translations
+    const terms = {
+      "Hello": "Hola",
+      "Goodbye": "Adiós",
+      "Thank you": "Gracias",
       // Add more terms as needed
-    ];
+    };
 
-    let currentIndex = 0;
-    let score = 0;
+    let shuffledTerms = shuffle(Object.entries(terms));
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
 
-    // Function to shuffle the terms array
+    function nextQuestion() {
+      const term = document.getElementById("term");
+      const answerInput = document.getElementById("answer");
+      const result = document.getElementById("result");
+
+      const [englishTerm, spanishTranslation] = shuffledTerms[currentQuestionIndex];
+      term.textContent = englishTerm;
+      answerInput.value = "";
+      result.textContent = "";
+
+      currentQuestionIndex++;
+      if (currentQuestionIndex === shuffledTerms.length) {
+        showFinalScore();
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        checkAnswer();
+      }
+    }
+
+    function checkAnswer() {
+      const answerInput = document.getElementById("answer");
+      const result = document.getElementById("result");
+      const [_, spanishTranslation] = shuffledTerms[currentQuestionIndex - 1];
+
+      if (answerInput.value.trim().toLowerCase() === spanishTranslation.toLowerCase()) {
+        result.textContent = "Correct!";
+        correctAnswers++;
+      } else {
+        result.textContent = "Wrong!";
+      }
+    }
+
+    function showFinalScore() {
+      const gameContainer = document.getElementById("game-container");
+      const score = document.createElement("p");
+      score.textContent = `You got ${correctAnswers} out of ${shuffledTerms.length} correct.`;
+      gameContainer.appendChild(score);
+
+      const uniqueCode = generateUniqueCode();
+      const codeElement = document.createElement("p");
+      codeElement.textContent = `Unique Code: ${uniqueCode}`;
+      gameContainer.appendChild(codeElement);
+    }
+
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
+      return array;
     }
 
-    // Function to display the next question
-    function displayNextQuestion() {
-      if (currentIndex < terms.length) {
-        const question = terms[currentIndex].english;
-        document.getElementById("question").textContent = question;
-        document.getElementById("answer").value = "";
-        document.getElementById("result").textContent = "";
-        currentIndex++;
-      } else {
-        displayFinalScore();
-      }
+    function generateUniqueCode() {
+      return Math.random().toString(36).substring(2, 12);
     }
-
-    // Function to check the answer
-    function checkAnswer() {
-      const userAnswer = document.getElementById("answer").value.toLowerCase();
-      const correctAnswer = terms[currentIndex - 1].spanish.toLowerCase();
-      if (userAnswer === correctAnswer) {
-        document.getElementById("result").textContent = "Correct!";
-        score++;
-      } else {
-        document.getElementById("result").textContent = "Wrong! The correct answer is: " + correctAnswer;
-      }
-    }
-
-    // Function to display the final score
-    function displayFinalScore() {
-      document.getElementById("game-container").style.display = "none";
-      document.getElementById("final-score").style.display = "block";
-      document.getElementById("score").textContent = score + "/" + terms.length;
-
-      // Generate random 10-digit code
-      const code = Math.floor(Math.random() * 9000000000) + 1000000000;
-      document.getElementById("code").textContent = "Unique Code: " + code;
-    }
-
-    // Event listener for Enter key press
-    document.getElementById("answer").addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (document.getElementById("answer").value !== "") {
-          document.getElementById("next-btn").click();
-        }
-      }
-    });
-
-    // Event listener for Next button click
-    document.getElementById("next-btn").addEventListener("click", function() {
-      checkAnswer();
-      displayNextQuestion();
-    });
-
-    // Start the game
-    shuffle(terms);
-    displayNextQuestion();
-    document.getElementById("game-container").style.display = "block";
   </script>
 </body>
 </html>
