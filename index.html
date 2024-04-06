@@ -26,6 +26,7 @@
 <div id="question"></div>
 <input type="text" id="answerInput" placeholder="Enter Spanish translation" autofocus>
 <button onclick="checkAnswer()">Submit Answer</button>
+<button onclick="nextQuestion()">Next Question</button>
 
 <script>
     const data = [
@@ -66,11 +67,28 @@
         displayNextQuestion();
     }
 
+    function nextQuestion() {
+        if (currentIndex >= data.length) {
+            alert("Game Over! Your final score: " + correctCount + " / " + data.length);
+            return;
+        }
+        document.getElementById("result").innerText = "";
+        displayNextQuestion();
+    }
+
     displayNextQuestion();
 
     // Generate random unique 10-digit code
     const uniqueCode = Math.floor(Math.random() * 9000000000) + 1000000000;
     document.write("<div id='uniqueCode'>Unique Code: " + uniqueCode + "</div>");
+
+    // Listen for Enter key press
+    document.getElementById("answerInput").addEventListener("keypress", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            checkAnswer();
+        }
+    });
 </script>
 </body>
 </html>
