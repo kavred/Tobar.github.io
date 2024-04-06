@@ -1,94 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English-Spanish Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .quiz-container {
-            margin-top: 50px;
-        }
-        .question {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .input-box {
-            margin-bottom: 20px;
-        }
-        .submit-btn {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English to Spanish Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    #container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+</style>
 </head>
 <body>
-    <h1>English-Spanish Quiz</h1>
-    <div class="quiz-container">
-        <form id="quiz-form">
-            <div class="question" id="question"></div>
-            <div class="input-box">
-                <input type="text" id="answer" required autocomplete="off">
-            </div>
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
-        <div id="score" style="display: none;"></div>
-    </div>
+<div id="container">
+    <h1>English to Spanish Game</h1>
+    <div id="game"></div>
+    <div id="result"></div>
+</div>
 
-    <script>
-        const word_dict = {
-            "house": "casa",
-            "dog": "perro",
-            "cat": "gato",
-            "book": "libro",
-            "table": "mesa",
-            // Add more words as needed
-        };
+<script>
+    // Array of English terms and their corresponding Spanish translations
+    const terms = [
+        { english: "apple", spanish: "manzana" },
+        { english: "banana", spanish: "plátano" },
+        { english: "car", spanish: "coche" },
+        // Add more terms as needed
+    ];
 
-        const quizForm = document.getElementById('quiz-form');
-        const questionElement = document.getElementById('question');
-        const answerElement = document.getElementById('answer');
-        const scoreElement = document.getElementById('score');
+    let score = 0;
 
-        let score = 0;
-        let totalQuestions = 0;
-        let currentQuestion = 0;
+    function generateRandomCode() {
+        return Math.floor(Math.random() * 10000000000);
+    }
 
-        function displayNextQuestion() {
-            if (currentQuestion < Object.keys(word_dict).length) {
-                const words = Object.keys(word_dict);
-                const word = words[currentQuestion];
-                questionElement.textContent = `What is the Spanish translation of '${word}'?`;
-                answerElement.value = '';
-                answerElement.focus();
-                totalQuestions++;
-                currentQuestion++;
-            } else {
-                quizForm.style.display = 'none';
-                scoreElement.textContent = `Quiz completed. Your score is ${score}/${totalQuestions}.`;
-                scoreElement.style.display = 'block';
-            }
+    function generateGame() {
+        const randomTerm = terms[Math.floor(Math.random() * terms.length)];
+        const answer = prompt(`Translate the word: ${randomTerm.english}`);
+        if (answer && answer.trim().toLowerCase() === randomTerm.spanish.toLowerCase()) {
+            score++;
+            document.getElementById("result").innerHTML = "<p>Correct!</p>";
+        } else {
+            document.getElementById("result").innerHTML = `<p>Incorrect! The correct answer is: ${randomTerm.spanish}</p>`;
         }
+        document.getElementById("game").innerHTML = `<p>Score: ${score}/${terms.length}</p>`;
+        document.getElementById("code").innerHTML = `<p>Unique Code: ${generateRandomCode()}</p>`;
+    }
 
-        quizForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const answer = answerElement.value.trim().toLowerCase();
-            const currentWord = Object.keys(word_dict)[currentQuestion - 1];
-            const correctAnswer = word_dict[currentWord].toLowerCase();
-            if (answer === correctAnswer) {
-                score++;
-            }
-            displayNextQuestion();
-        });
-
-        displayNextQuestion();
-    </script>
+    window.onload = generateGame;
+</script>
+<div id="code"></div>
 </body>
 </html>
