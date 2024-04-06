@@ -1,106 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English to Spanish Translation Game</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    #score {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-    #result {
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English to Spanish Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #score {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>English to Spanish Translation Game</h1>
-<div id="score">Score: <span id="correctCount">0</span> / <span id="totalCount">0</span></div>
-<div id="result"></div>
-<div id="question"></div>
-<input type="text" id="answerInput" placeholder="Enter Spanish translation" autofocus>
-<button onclick="checkAnswer()">Submit Answer</button>
-<button onclick="nextQuestion()">Next Question</button>
+    <h1>English to Spanish Game</h1>
+    <div id="question"></div>
+    <input type="text" id="answer" placeholder="Enter Spanish translation">
+    <button onclick="checkAnswer()">Submit</button>
+    <div id="result"></div>
+    <div id="score"></div>
+    <button id="nextBtn" style="display: none;" onclick="nextQuestion()">Next Question</button>
+    <div id="code"></div>
 
-<script>
-    const data = [
-        { english: "house", spanish: "casa" },
-        { english: "dog", spanish: "perro" },
-        { english: "cat", spanish: "gato" },
-        { english: "tree", spanish: "árbol" },
-        { english: "car", spanish: "coche" }
-        // Add more words as needed
-    ];
+    <script>
+        // Define your English-Spanish terms here
+        const terms = [
+            { english: "apple", spanish: "manzana" },
+            { english: "banana", spanish: "plátano" },
+            { english: "car", spanish: "coche" },
+            // Add more terms as needed
+        ];
 
-    let currentIndex = 0;
-    let correctCount = 0;
+        let currentIndex = 0;
+        let score = 0;
 
-    // Function to shuffle array
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    // Randomize the order of terms
-    const shuffledData = shuffle(data);
-
-    function displayNextQuestion() {
-        if (currentIndex >= shuffledData.length) {
-            alert("Game Over! Your final score: " + correctCount + " / " + shuffledData.length);
-            return;
-        }
-        document.getElementById("question").innerText = shuffledData[currentIndex].english;
-    }
-
-    function checkAnswer() {
-        const answerInput = document.getElementById("answerInput").value.trim().toLowerCase();
-        const correctAnswer = shuffledData[currentIndex].spanish.toLowerCase();
-
-        if (answerInput === correctAnswer) {
-            document.getElementById("result").innerText = "Correct!";
-            correctCount++;
-        } else {
-            document.getElementById("result").innerText = "Wrong! Correct answer: " + correctAnswer;
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
-        currentIndex++;
-        document.getElementById("correctCount").innerText = correctCount;
-        document.getElementById("totalCount").innerText = currentIndex;
-        document.getElementById("answerInput").value = "";
-        displayNextQuestion();
-    }
+        function displayQuestion() {
+            document.getElementById("answer").value = "";
+            document.getElementById("result").innerText = "";
+            document.getElementById("nextBtn").style.display = "none";
 
-    function nextQuestion() {
-        if (currentIndex >= shuffledData.length) {
-            alert("Game Over! Your final score: " + correctCount + " / " + shuffledData.length);
-            return;
+            if (currentIndex < terms.length) {
+                document.getElementById("question").innerText = terms[currentIndex].english;
+            } else {
+                document.getElementById("question").innerText = "Game Over";
+                document.getElementById("score").innerText = `Final Score: ${score}/${terms.length}`;
+            }
         }
-        document.getElementById("result").innerText = "";
-        displayNextQuestion();
-    }
 
-    displayNextQuestion();
+        function checkAnswer() {
+            const answer = document.getElementById("answer").value.trim().toLowerCase();
+            const correctAnswer = terms[currentIndex].spanish.toLowerCase();
+            const resultDiv = document.getElementById("result");
 
-    // Generate random unique 10-digit code
-    const uniqueCode = Math.floor(Math.random() * 9000000000) + 1000000000;
-    document.write("<div id='uniqueCode'>Unique Code: " + uniqueCode + "</div>");
+            if (answer === correctAnswer) {
+                resultDiv.innerText = "Correct!";
+                score++;
+            } else {
+                resultDiv.innerText = `Wrong! Correct answer is: ${correctAnswer}`;
+            }
 
-    // Listen for Enter key press
-    document.getElementById("answerInput").addEventListener("keypress", function(event) {
-        if (event.keyCode === 13) {
-            event.preventDefault();
-            checkAnswer();
+            currentIndex++;
+            document.getElementById("nextBtn").style.display = "block";
         }
-    });
-</script>
+
+        function nextQuestion() {
+            displayQuestion();
+        }
+
+        // Shuffle the terms array for random order
+        shuffle(terms);
+
+        // Display the first question
+        displayQuestion();
+
+        // Generate and display a random 10-digit code
+        const randomCode = Math.floor(1000000000 + Math.random() * 9000000000);
+        document.getElementById("code").innerText = `Unique Code: ${randomCode}`;
+    </script>
 </body>
 </html>
