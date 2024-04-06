@@ -3,55 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English to Spanish Game</title>
+<title>English to Spanish Translation Game</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-    }
-    #container {
-        max-width: 600px;
-        margin: 0 auto;
         text-align: center;
+    }
+    #score {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    #result {
+        font-size: 20px;
+        margin-bottom: 10px;
     }
 </style>
 </head>
 <body>
-<div id="container">
-    <h1>English to Spanish Game</h1>
-    <div id="game"></div>
-    <div id="result"></div>
-</div>
+<h1>English to Spanish Translation Game</h1>
+<div id="score">Score: <span id="correctCount">0</span> / <span id="totalCount">0</span></div>
+<div id="result"></div>
+<div id="question"></div>
+<input type="text" id="answerInput" placeholder="Enter Spanish translation" autofocus>
+<button onclick="checkAnswer()">Submit Answer</button>
 
 <script>
-    // Array of English terms and their corresponding Spanish translations
-    const terms = [
-        { english: "apple", spanish: "manzana" },
-        { english: "banana", spanish: "plátano" },
-        { english: "car", spanish: "coche" },
-        // Add more terms as needed
+    const data = [
+        { english: "house", spanish: "casa" },
+        { english: "dog", spanish: "perro" },
+        { english: "cat", spanish: "gato" },
+        { english: "tree", spanish: "árbol" },
+        { english: "car", spanish: "coche" }
+        // Add more words as needed
     ];
 
-    let score = 0;
+    let currentIndex = 0;
+    let correctCount = 0;
 
-    function generateRandomCode() {
-        return Math.floor(Math.random() * 10000000000);
-    }
-
-    function generateGame() {
-        const randomTerm = terms[Math.floor(Math.random() * terms.length)];
-        const answer = prompt(`Translate the word: ${randomTerm.english}`);
-        if (answer && answer.trim().toLowerCase() === randomTerm.spanish.toLowerCase()) {
-            score++;
-            document.getElementById("result").innerHTML = "<p>Correct!</p>";
-        } else {
-            document.getElementById("result").innerHTML = `<p>Incorrect! The correct answer is: ${randomTerm.spanish}</p>`;
+    function displayNextQuestion() {
+        if (currentIndex >= data.length) {
+            alert("Game Over! Your final score: " + correctCount + " / " + data.length);
+            return;
         }
-        document.getElementById("game").innerHTML = `<p>Score: ${score}/${terms.length}</p>`;
-        document.getElementById("code").innerHTML = `<p>Unique Code: ${generateRandomCode()}</p>`;
+        document.getElementById("question").innerText = data[currentIndex].english;
     }
 
-    window.onload = generateGame;
+    function checkAnswer() {
+        const answerInput = document.getElementById("answerInput").value.trim().toLowerCase();
+        const correctAnswer = data[currentIndex].spanish.toLowerCase();
+
+        if (answerInput === correctAnswer) {
+            document.getElementById("result").innerText = "Correct!";
+            correctCount++;
+        } else {
+            document.getElementById("result").innerText = "Wrong! Correct answer: " + correctAnswer;
+        }
+
+        currentIndex++;
+        document.getElementById("correctCount").innerText = correctCount;
+        document.getElementById("totalCount").innerText = currentIndex;
+        document.getElementById("answerInput").value = "";
+        displayNextQuestion();
+    }
+
+    displayNextQuestion();
+
+    // Generate random unique 10-digit code
+    const uniqueCode = Math.floor(Math.random() * 9000000000) + 1000000000;
+    document.write("<div id='uniqueCode'>Unique Code: " + uniqueCode + "</div>");
 </script>
-<div id="code"></div>
 </body>
 </html>
