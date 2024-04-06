@@ -26,6 +26,7 @@
 <div id="question"></div>
 <input type="text" id="answerInput" placeholder="Enter Spanish translation" autofocus>
 <button onclick="checkAnswer()">Submit Answer</button>
+<button onclick="nextQuestion()">Next Question</button>
 
 <script>
     const data = [
@@ -40,17 +41,29 @@
     let currentIndex = 0;
     let correctCount = 0;
 
+    // Function to shuffle array
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Randomize the order of terms
+    const shuffledData = shuffle(data);
+
     function displayNextQuestion() {
-        if (currentIndex >= data.length) {
-            alert("Game Over! Your final score: " + correctCount + " / " + data.length);
+        if (currentIndex >= shuffledData.length) {
+            alert("Game Over! Your final score: " + correctCount + " / " + shuffledData.length);
             return;
         }
-        document.getElementById("question").innerText = data[currentIndex].english;
+        document.getElementById("question").innerText = shuffledData[currentIndex].english;
     }
 
     function checkAnswer() {
         const answerInput = document.getElementById("answerInput").value.trim().toLowerCase();
-        const correctAnswer = data[currentIndex].spanish.toLowerCase();
+        const correctAnswer = shuffledData[currentIndex].spanish.toLowerCase();
 
         if (answerInput === correctAnswer) {
             document.getElementById("result").innerText = "Correct!";
@@ -67,8 +80,8 @@
     }
 
     function nextQuestion() {
-        if (currentIndex >= data.length) {
-            alert("Game Over! Your final score: " + correctCount + " / " + data.length);
+        if (currentIndex >= shuffledData.length) {
+            alert("Game Over! Your final score: " + correctCount + " / " + shuffledData.length);
             return;
         }
         document.getElementById("result").innerText = "";
